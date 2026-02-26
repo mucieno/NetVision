@@ -1,3 +1,4 @@
+![NetVision Dashboard](NetVision.jpg)
 # 🛡️ NetVision
 **A professional Web Dashboard for real-time Cisco IOS health monitoring & automated diagnostics.**
 
