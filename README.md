@@ -1,3 +1,4 @@
+![Python](https://img.shields.io/badge/python-3670A0?style=for-the-badge&logo=python&logoColor=ffdd54)
 ![NetVision Dashboard](NetVision.jpg)
 # 🛡️ NetVision
 **A professional Web Dashboard for real-time Cisco IOS health monitoring & automated diagnostics.**
