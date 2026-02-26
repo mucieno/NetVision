@@ -1,0 +1,301 @@
+<!DOCTYPE html>
+<html lang="en" data-bs-theme="light">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title> NetVision | Live Dashboard</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+    <style>
+        :root {
+            --bg-color: #f4f7f9;
+            --card-bg: #ffffff;
+            --text-color: #2b2d42;
+            --accent-color: #3a86ff;
+            --header-gradient: linear-gradient(135deg, #1e293b 0%, #0f172a 100%);
+        }
+
+        [data-bs-theme="dark"] {
+            --bg-color: #0f172a;
+            --card-bg: #1e293b;
+            --text-color: #f1f5f9;
+            --accent-color: #38bdf8;
+            --header-gradient: linear-gradient(135deg, #020617 0%, #1e293b 100%);
+        }
+
+        body { 
+            background-color: var(--bg-color); 
+            color: var(--text-color);
+            transition: all 0.3s ease;
+            font-family: 'Segoe UI', system-ui, -apple-system, sans-serif;
+            min-height: 100vh;
+        }
+
+        /* Navbar & Header */
+        .navbar {
+            background: rgba(255, 255, 255, 0.05);
+            backdrop-filter: blur(10px);
+            border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+            padding: 1rem 0;
+        }
+
+        .hero-section {
+            background: var(--header-gradient);
+            color: white;
+            padding: 60px 0;
+            border-radius: 0 0 40px 40px;
+            margin-bottom: 40px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.15);
+        }
+
+        /* Professional Toggle Switch */
+        .switch {
+            position: relative;
+            display: inline-block;
+            width: 46px;
+            height: 22px;
+        }
+        .switch input { opacity: 0; width: 0; height: 0; }
+        .slider {
+            position: absolute;
+            cursor: pointer;
+            top: 0; left: 0; right: 0; bottom: 0;
+            background-color: #ccc;
+            transition: .4s;
+            border-radius: 34px;
+        }
+        .slider:before {
+            position: absolute;
+            content: "";
+            height: 16px; width: 16px;
+            left: 3px; bottom: 3px;
+            background-color: white;
+            transition: .4s;
+            border-radius: 50%;
+        }
+        input:checked + .slider { background-color: var(--accent-color); }
+        input:checked + .slider:before { transform: translateX(24px); }
+
+        /* Cards Styling */
+        .card {
+            background-color: var(--card-bg);
+            border: none;
+            border-radius: 20px;
+            box-shadow: 0 8px 24px rgba(0,0,0,0.05);
+            transition: transform 0.2s, box-shadow 0.2s;
+            margin-bottom: 24px;
+            overflow: hidden;
+        }
+        .card:hover { transform: translateY(-5px); box-shadow: 0 12px 30px rgba(0,0,0,0.1); }
+
+        .card-header {
+            background: transparent;
+            border-bottom: 1px solid rgba(0,0,0,0.05);
+            font-weight: 700;
+            padding: 1.25rem;
+            display: flex;
+            align-items: center;
+        }
+
+        /* Terminal Output Style */
+        pre {
+            background: #000000 !important;
+            color: #00ff41 !important;
+            padding: 1.5rem;
+            margin: 0;
+            font-family: 'Fira Code', 'Courier New', monospace;
+            font-size: 0.85rem;
+            max-height: 320px;
+            overflow-y: auto;
+            border-top: 1px solid #333;
+        }
+
+        /* Inputs & Buttons */
+        .form-control {
+            border-radius: 12px;
+            padding: 14px;
+            background: var(--card-bg);
+            color: var(--text-color);
+            border: 1px solid rgba(0,0,0,0.1);
+        }
+        .btn-analyze {
+            background-color: var(--accent-color);
+            border: none;
+            padding: 12px 35px;
+            border-radius: 12px;
+            font-weight: 600;
+            color: white;
+            transition: opacity 0.2s;
+        }
+        .btn-analyze:hover { opacity: 0.9; color: white; }
+
+        .hostname-badge {
+            background: var(--accent-color);
+            padding: 10px 25px;
+            border-radius: 50px;
+            font-size: 1rem;
+            font-weight: bold;
+            box-shadow: 0 4px 15px rgba(58, 134, 255, 0.3);
+        }
+
+        ::-webkit-scrollbar { width: 8px; }
+        ::-webkit-scrollbar-thumb { background: #444; border-radius: 10px; }
+    </style>
+</head>
+<body>
+
+<nav class="navbar navbar-expand-lg">
+    <div class="container">
+        <a class="navbar-brand fw-bold text-primary" href="#">
+            <i class="fas fa-network-wired me-2"></i>NetVision
+        </a>
+        <div class="d-flex align-items-center">
+            <i class="fas fa-sun me-2 text-warning"></i>
+            <label class="switch">
+                <input type="checkbox" id="themeToggle">
+                <span class="slider"></span>
+            </label>
+            <i class="fas fa-moon ms-2 text-secondary"></i>
+        </div>
+    </div>
+</nav>
+
+<div class="hero-section text-center">
+    <div class="container">
+        <h1 class="display-4 fw-bold mb-3">NetVision</h1>
+        <p class="fs-5 opacity-75">Automated health check and real-time interface monitoring for Cisco IOS.</p>
+    </div>
+</div>
+
+<div class="container">
+    <div class="row justify-content-center mb-5">
+        <div class="col-md-8 text-center">
+            <div class="card p-4">
+                <div class="input-group">
+                    <input type="text" id="device_ip" class="form-control shadow-none" placeholder="Enter Device IP (e.g., 10.0.0.1)">
+                    <button id="run_btn" class="btn btn-analyze text-uppercase">
+                        <i class="fas fa-magnifying-glass me-2"></i>Run Analysis
+                    </button>
+                </div>
+                <div id="loading" class="mt-4" style="display:none;">
+                    <div class="spinner-border text-primary mb-2" role="status"></div>
+                    <div class="small fw-bold opacity-75">Establishing secure SSH connection...</div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div id="results_section" style="display: none;">
+        <div class="d-flex justify-content-between align-items-center mb-4 px-2">
+            <h3 class="mb-0 fw-bold"><i class="fas fa-chart-line me-2 text-primary"></i>Live Report</h3>
+            <span id="res_hostname" class="hostname-badge text-white">DEVICE: ---</span>
+        </div>
+
+        <div class="row">
+            <div class="col-lg-6">
+                <div class="card">
+                    <div class="card-header text-danger"><i class="fas fa-triangle-exclamation me-2"></i>Interface Errors</div>
+                    <pre id="res_errors">Scanning...</pre>
+                </div>
+            </div>
+            <div class="col-lg-6">
+                <div class="card">
+                    <div class="card-header text-warning"><i class="fas fa-microchip me-2"></i>CPU Load Utility</div>
+                    <pre id="res_cpu">Scanning...</pre>
+                </div>
+            </div>
+            <div class="col-lg-12">
+                <div class="card">
+                    <div class="card-header text-info"><i class="fas fa-file-waveform me-2"></i>System Log History</div>
+                    <pre id="res_log" style="max-height: 400px;">Fetching logs...</pre>
+                </div>
+            </div>
+            <div class="col-lg-4">
+                <div class="card">
+                    <div class="card-header text-secondary"><i class="fas fa-plug-circle-bolt me-2"></i>Down Ports</div>
+                    <pre id="res_notconnect">Checking status...</pre>
+                </div>
+            </div>
+            <div class="col-lg-4">
+                <div class="card">
+                    <div class="card-header text-success"><i class="fas fa-wind me-2"></i>Environment</div>
+                    <pre id="res_env">Reading sensors...</pre>
+                </div>
+            </div>
+            <div class="col-lg-4">
+                <div class="card">
+                    <div class="card-header text-primary"><i class="fas fa-right-left me-2"></i>Duplex Info</div>
+                    <pre id="res_duplex">Checking duplex...</pre>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<footer class="text-center py-4 opacity-50 small">
+    Cisco Automation Tool &copy; 2026 | Professional Monitoring Interface
+</footer>
+
+<script>
+    // Theme Toggle Logic with Persistence
+    const themeToggle = document.getElementById('themeToggle');
+    const htmlElement = document.documentElement;
+    
+    // Check for saved theme
+    const savedTheme = localStorage.getItem('theme') || 'light';
+    htmlElement.setAttribute('data-bs-theme', savedTheme);
+    themeToggle.checked = (savedTheme === 'dark');
+
+    themeToggle.addEventListener('change', () => {
+        const theme = themeToggle.checked ? 'dark' : 'light';
+        htmlElement.setAttribute('data-bs-theme', theme);
+        localStorage.setItem('theme', theme);
+    });
+
+    // Fetching Data Logic
+    document.getElementById('run_btn').addEventListener('click', function() {
+        const ip = document.getElementById('device_ip').value;
+        if (!ip) {
+            alert('Please enter an IP address first.');
+            return;
+        }
+
+        const runBtn = this;
+        runBtn.disabled = true;
+        document.getElementById('loading').style.display = 'block';
+        document.getElementById('results_section').style.display = 'none';
+
+        fetch('/run', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ ip: ip })
+        })
+        .then(response => response.json())
+        .then(data => {
+            runBtn.disabled = false;
+            document.getElementById('loading').style.display = 'none';
+            
+            if (data.error) {
+                alert('Connection Error: ' + data.details);
+            } else {
+                document.getElementById('results_section').style.display = 'block';
+                const res = data.results;
+                document.getElementById('res_hostname').innerText = "DEVICE: " + res.hostname;
+                document.getElementById('res_errors').innerText = res.errors || "No errors found.";
+                document.getElementById('res_cpu').innerText = res.cpu || "No data.";
+                document.getElementById('res_notconnect').innerText = res.notconnect || "All ports up.";
+                document.getElementById('res_log').innerText = res.log_tail || "No logs found.";
+                document.getElementById('res_env').innerText = res.env || "No data.";
+                document.getElementById('res_duplex').innerText = res.duplex || "No half-duplex found.";
+            }
+        })
+        .catch(err => {
+            runBtn.disabled = false;
+            document.getElementById('loading').style.display = 'none';
+            alert('Failed to connect to the server.');
+        });
+    });
+</script>
+
+</body>
+</html>
