@@ -1,0 +1,11 @@
+# Security: Hide credentials
+.env
+
+# Environments: Hide heavy local virtual environments
+venv/
+ENV/
+env/
+
+# Python: Hide temporary cache files
+__pycache__/
+*.py[cod]
